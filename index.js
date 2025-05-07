@@ -73,20 +73,15 @@ function procesar() {
 
     // Convertir el LaTeX básico a una expresión evaluable (muy básico)
     let formula = latex
-        .replace(/\\frac{([^}]*)}{([^}]*)}/g, '($1)/($2)')                // fracciones
-        .replace(/\\cdot/g, '*')                                          // multiplicación
-        .replace(/\\sqrt{([^}]*)}/g, 'Math.sqrt($1)')                     // raíz
-        .replace(/\\left\(/g, '(')                                        // paréntesis normales
-        .replace(/\\right\)/g, ')')                                       // paréntesis normales
-
-        // Potencias con llaves: (k+1)^{2} → (k+1)**(2)
-        .replace(/(\([^\)]+\)|[a-zA-Z0-9\]])\^\{([^}]+)\}/g, '($1)**($2)')
-
-        // Potencias sin llaves: (k+1)^2 → (k+1)**(2)
-        .replace(/(\([^\)]+\)|[a-zA-Z0-9\]])\^([a-zA-Z0-9\]])/g, '($1)**($2)')
-
-        .replace(/k/g, 'k');
-    // mantener variable
+        .replace(/\\frac{([^}]*)}{([^}]*)}/g, '($1)/($2)')            // fracciones
+        .replace(/\\cdot/g, '*')                                       // multiplicación
+        .replace(/\\sqrt{([^}]*)}/g, 'Math.sqrt($1)')                  // raíz
+        .replace(/\\left\(/g, '(')                                      // paréntesis
+        .replace(/\\right\)/g, ')')                                     // paréntesis
+        .replace(/([0-9])k/g, '$1*k')                                   // manejar 5k como 5*k
+        .replace(/(\([^\)]+\)|[a-zA-Z0-9\]])\^\{([^}]+)\}/g, '($1)**($2)') // potencias con llaves
+        .replace(/(\([^\)]+\)|[a-zA-Z0-9\]])\^([a-zA-Z0-9\]])/g, '($1)**($2)') // potencias sin llaves
+        .replace(/k/g, 'k');                                           // variable k
 
     console.log("Fórumula: ", formula);
     console.log("Latex: ", latex);
@@ -106,15 +101,15 @@ function procesar() {
     // Mostrar los términos
     let html = `<h3>Fórmula general:</h3>`;
     html += `<p>\\( a_k = ${latex} \\)</p>`;
-    
+
     html += `<h3>Términos de la sucesión:</h3><ul>`;
     for (let i = 0; i < sucesion.length; i++) {
-      const kActual = m + i;
-      const latexTerm = latex.replace(/k/g, kActual); // reemplaza "k" por número
-      html += `<li>\\( a_{${kActual}} = ${latexTerm} = ${sucesion[i].toFixed(6)} \\)</li>`;
+        const kActual = m + i;
+        const latexTerm = latex.replace(/k/g, kActual); // reemplaza "k" por número
+        html += `<li>\\( a_{${kActual}} = ${latexTerm} = ${sucesion[i].toFixed(6)} \\)</li>`;
     }
     html += `</ul>`;
-    
+
 
     // Funciones recursivas
     function sumaRecursiva(arr, i = 0) {
