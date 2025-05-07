@@ -4,24 +4,33 @@
   <meta charset="UTF-8">
   <title>Sucesión con fórmula</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive.min.css">
+<script src="https://unpkg.com/mathlive"></script>
+
 </head>
 <body>
-  <h2>Calculadora de Sucesión</h2>
-  <p>Introduce solo la fórmula usando <code>k</code> como variable. Ejemplo: <strong>1 / k</strong></p>
-
-  <label>Fórmula (usa k):</label><br>
-  <input type="text" id="formula" placeholder="Ej: 1 / k"><br>
-
-  <label>Límite inferior (m):</label><br>
-  <input type="number" id="min" value="5"><br>
-
-  <label>Límite superior (n):</label><br>
-  <input type="number" id="max" value="10"><br>
-
-  <button onclick="procesar()">Calcular</button>
-
-  <div id="resultados"></div>
-
+    <div>    <h1>Calculadora de Sucesión</h1>
+    <div class="card">
+      <p>Introduce solo la fórmula usando <code>k</code> como variable. Ejemplo: <strong>1 / k</strong></p>
+  
+      <label for="formula">Fórmula (usa k):</label>
+      <math-field id="formula" virtual-keyboard-mode="manual" style="width: 100%; font-size: 18px;"></math-field>
+      
+      <label for="min">Límite inferior (m):</label>
+      <input type="number" id="min" value="5">
+  
+      <label for="max">Límite superior (n):</label>
+      <input type="number" id="max" value="10">
+  
+      <button onclick="procesar()">Calcular</button>
+  
+      <div id="resultados"></div>
+    </div>
+    <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
     <script src="index.js"></script>
-</body>
+</div>
+
+  </body>
 </html>
