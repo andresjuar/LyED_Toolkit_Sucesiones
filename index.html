@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Sucesión con fórmula</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2>Calculadora de Sucesión</h2>
+  <p>Introduce solo la fórmula usando <code>k</code> como variable. Ejemplo: <strong>1 / k</strong></p>
+
+  <label>Fórmula (usa k):</label><br>
+  <input type="text" id="formula" placeholder="Ej: 1 / k"><br>
+
+  <label>Límite inferior (m):</label><br>
+  <input type="number" id="min" value="5"><br>
+
+  <label>Límite superior (n):</label><br>
+  <input type="number" id="max" value="10"><br>
+
+  <button onclick="procesar()">Calcular</button>
+
+  <div id="resultados"></div>
+
+    <script src="index.js"></script>
+</body>
+</html>
