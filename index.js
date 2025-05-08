@@ -73,16 +73,36 @@ function procesar() {
 
     // Convertir el LaTeX básico a una expresión evaluable (muy básico)
     let formula = latex
-        .replace(/\\frac{([^}]*)}{([^}]*)}/g, '($1)/($2)')            // fracciones
-        .replace(/\\cdot/g, '*')                                       // multiplicación
-        .replace(/\\sqrt{([^}]*)}/g, 'Math.sqrt($1)')                  // raíz
-        .replace(/\\left\(/g, '(')                                      // paréntesis
-        .replace(/\\right\)/g, ')')                                     // paréntesis
-        .replace(/([0-9])k/g, '$1*k')                                   // manejar 5k como 5*k
-        .replace(/(\([^\)]+\)|[a-zA-Z0-9\]])\^\{([^}]+)\}/g, '($1)**($2)') // potencias con llaves
-        .replace(/(\([^\)]+\)|[a-zA-Z0-9\]])\^([a-zA-Z0-9\]])/g, '($1)**($2)') // potencias sin llaves
-        .replace(/k/g, 'k');                                           // variable k
-
+    // Corrige fracciones sin llaves: \frac78 → \frac{7}{8}
+    .replace(/\\frac(\d+)(\d+)/g, '\\frac{$1}{$2}')
+  
+    // Convierte \frac{a}{b} → (a)/(b)
+    .replace(/\\frac{([^}]*)}{([^}]*)}/g, '($1)/($2)')
+  
+    // Corrige multiplicación implícita: (7/2)k → (7/2)*k
+    .replace(/\(([^)]+)\/([^)]+)\)k/g, '($1/$2)*k')
+  
+    // 5k → 5*k
+    .replace(/([0-9])k/g, '$1*k')
+  
+    // Multiplicación explícita \cdot
+    .replace(/\\cdot/g, '*')
+  
+    // Raíz cuadrada
+    .replace(/\\sqrt{([^}]*)}/g, 'Math.sqrt($1)')
+  
+    // Paréntesis
+    .replace(/\\left\(/g, '(').replace(/\\right\)/g, ')')
+  
+    // Potencias con llaves: (k+1)^{2} → (k+1)**(2)
+    .replace(/(\([^\)]+\)|[a-zA-Z0-9\]])\^\{([^}]+)\}/g, '($1)**($2)')
+  
+    // Potencias sin llaves: (k+1)^2 → (k+1)**2
+    .replace(/(\([^\)]+\)|[a-zA-Z0-9\]])\^([a-zA-Z0-9\]])/g, '($1)**($2)')
+  
+    // Finalmente, reemplaza k por la variable
+    .replace(/k/g, 'k');
+  
     console.log("Fórumula: ", formula);
     console.log("Latex: ", latex);
 
@@ -105,25 +125,33 @@ function procesar() {
     html += `<h3>Términos de la sucesión:</h3><ul>`;
     for (let i = 0; i < sucesion.length; i++) {
         const kActual = m + i;
-        const latexTerm = latex.replace(/k/g, kActual); // reemplaza "k" por número
+        const latexTerm = latex
+            // Inserta \cdot entre número/paréntesis y k
+            .replace(/(\d|\))k/g, '$1\\cdot ' + kActual)
+            // En los demás casos, solo reemplaza k por el valor
+            .replace(/k/g, kActual);
         html += `<li>\\( a_{${kActual}} = ${latexTerm} = ${sucesion[i].toFixed(6)} \\)</li>`;
     }
     html += `</ul>`;
 
 
     // Funciones recursivas
-    function sumaRecursiva(arr, i = 0) {
-        if (i >= arr.length) return 0;
-        return arr[i] + sumaRecursiva(arr, i + 1);
+    function sumaRecursiva(formula, m, n) {
+        if (m > n) return 0;
+        const valor = eval(formula.replace(/k/g, `(${m})`));
+        return valor + sumaRecursiva(formula, m + 1, n);
     }
 
-    function multRecursiva(arr, i = 0) {
-        if (i >= arr.length) return 1;
-        return arr[i] * multRecursiva(arr, i + 1);
+    function multRecursiva(formula, m, n) {
+        if (m > n) return 1;
+        const valor = eval(formula.replace(/k/g, `(${m})`));
+        return valor * multRecursiva(formula, m + 1, n);
     }
 
-    const suma = sumaRecursiva(sucesion);
-    const producto = multRecursiva(sucesion);
+
+    const suma = sumaRecursiva(formula, m, n);
+    const producto = multRecursiva(formula, m, n);
+
 
     html += `<h3>Resultados:</h3>`;
     html += `<p>Sumatoria: <strong>${suma.toFixed(6)}</strong></p>`;
